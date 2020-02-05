@@ -14,30 +14,13 @@ namespace ConsoleApplication1
         {
             Console.WriteLine("Pressione uma tecla para iniciar....");
             Console.ReadKey();
-            Task t = teste();
+            Task t = TesteSomarDoisInteiros(3333, 3333);
             while (t.Status != TaskStatus.Faulted && t.Status != TaskStatus.RanToCompletion)
                 Console.Write(".");
             Console.ReadKey();
         }
 
-        /*
-        static async Task Main(string[] args)
-        {
-            Console.WriteLine("Pressione uma tecla para iniciar....");
-            Console.ReadKey();
-
-            HttpClient clienteHttp = new HttpClient();
-
-            HttpRequestMessage pergunta = new HttpRequestMessage(HttpMethod.Post, @"http://localhost:2218/Service1.svc");
-
-            HttpResponseMessage respota = await clienteHttp.SendAsync(pergunta);
-
-            Console.WriteLine(respota);
-            Console.ReadKey();
-        }
-        */
-
-        static async Task teste()
+        static async Task TesteSomarDoisInteiros(int valorA, int valorB )
         {
             try
             {
@@ -45,27 +28,27 @@ namespace ConsoleApplication1
                 HttpClient clienteHttp = new HttpClient();
                 HttpRequestMessage pergunta = new HttpRequestMessage(HttpMethod.Post, @"http://localhost:2218/Service1.svc");
                 pergunta.Headers.Add("SOAPAction", @"http://tempuri.org/IService1/SomarDoisInteiros");
-                
-                String corpo = 
-@"<?xml version=""1.0"" encoding=""utf-8""?>
-<soap:Envelope 
-		xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" 
-		xmlns:xsd=""http://www.w3.org/2001/XMLSchema""
-		xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" >
-<soap:Body>
-	<SomarDoisInteiros xmlns=""http://tempuri.org/"">
-      <a>555</a>
-      <b>222</b>
-    </SomarDoisInteiros>
-</soap:Body>
-</soap:Envelope>";
+
+                StringBuilder corpo = new StringBuilder();
+                corpo.AppendLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
+                corpo.AppendLine(@"<soap:Envelope ");
+                corpo.AppendLine(@"       xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" ");
+                corpo.AppendLine(@"		xmlns:xsd=""http://www.w3.org/2001/XMLSchema""");
+                corpo.AppendLine(@"      xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"" >");
+                corpo.AppendLine(@"    <soap:Body>");
+                corpo.AppendLine(@"        <SomarDoisInteiros xmlns=""http://tempuri.org/"">");
+                corpo.AppendLine(@"            <a>" + valorA.ToString() + "</a>");
+                corpo.AppendLine(@"            <b>" + valorB.ToString() + "</b>");
+                corpo.AppendLine(@"        </SomarDoisInteiros>");
+                corpo.AppendLine(@"    </soap:Body>");
+                corpo.AppendLine(@"</soap:Envelope>");
 
 
-                pergunta.Content = new StringContent(corpo, Encoding.UTF8, @"text/xml");
+                pergunta.Content = new StringContent(corpo.ToString(), Encoding.UTF8, @"text/xml");
                 Console.WriteLine("////");
                 Console.WriteLine(pergunta);
                 Console.WriteLine("////");
-                Console.WriteLine(corpo);
+                Console.WriteLine(corpo.ToString());
                 Console.WriteLine("////");
                 HttpResponseMessage respota = await clienteHttp.SendAsync(pergunta);
 
