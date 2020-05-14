@@ -30,7 +30,7 @@
 <body>
     <table>
         <tr>
-            <td>Expressão</td>
+            <td>Expressao</td>
             <td><input type="search" list="expressao" id="cmbExpressao"></td>
             <td><button id="btLimpa">limpar</button></td>
         </tr>
@@ -67,11 +67,11 @@
                 <td><input type="search" list="tipoConceito" id="frmEdicao.Tipo" onchange="trocarTipo()"></td>
             </tr>
             <tr id="frmEdicao.Linha.SubTipo">
-                <td>Sub Tipo Conceito</td>
+                <td id="frmEdicao.Titulo.SubTipo">Sub Tipo Conceito</td>
                 <td><input type="search" list="subTipoConceito" id="frmEdicao.SubTipo"></td>
             </tr>
             <tr id="frmEdicao.Linha.Valor">
-                <td>Valor</td>
+                <td id="frmEdicao.Titulo.Valor">Valor</td>
                 <td><input type="text" id="frmEdicao.Valor"></td>
             </tr>
             <tr id="frmEdicao.Linha.Dias">
@@ -107,12 +107,12 @@
         <option value="Retorno">
     </datalist>
     <datalist id="expressao">
-        <option value="Expressão A">
-        <option value="Expressão B">
-        <option value="Expressão C">
-        <option value="Expressão D">
-        <option value="Expressão E">
-        <option value="Expressão F">
+        <option value="Expressao A">
+        <option value="Expressao B">
+        <option value="Expressao C">
+        <option value="Expressao D">
+        <option value="Expressao E">
+        <option value="Expressao F">
     </datalist>
 
 
@@ -146,7 +146,7 @@
 
             for (let index = 0; index < qtd; index++) {
 
-                lstConceitos.push({ nome: 'Conceito - ' + index, tipo: 'Não Definido', subTipo: '-', valor: '-', dias: '-' })
+                lstConceitos.push({ nome: 'Conceito - ' + index, tipo: 'Nao Definido', subTipo: '-', valor: '-', dias: '-' })
             }
 
             atualizarConceito();
@@ -179,21 +179,31 @@
                 , linhaSubTipo: document.getElementById("frmEdicao.Linha.SubTipo")
                 , linhaValor: document.getElementById("frmEdicao.Linha.Valor")
                 , linhaDias: document.getElementById("frmEdicao.Linha.Dias")
+                , tituloSubTipo: document.getElementById("frmEdicao.Titulo.SubTipo")
+                , tituloValor: document.getElementById("frmEdicao.Titulo.Valor")
                 , salvar: document.getElementById("frmEdicao.Salvar")
             }
             return formulario;
         }
 
         function limparEdicao() {
+            limparEdicao2(true)
+        }
+
+        function limparEdicao2(limpaTipo) {
             var frm = pegarFormulario();
-            frm.tipo.value = '';
+            if (limpaTipo) {
+                frm.tipo.value = '';
+            } 
             frm.subTipo.value = '';
             frm.valor.value = '';
-            frm.dias.value = 0;
+            frm.dias.value = '';
 
             frm.linhaSubTipo.style.visibility = "hidden";
             frm.linhaValor.style.visibility = "hidden";
             frm.linhaDias.style.visibility = "hidden";
+            frm.tituloSubTipo.innerHTML = "Sub Tipo";
+            frm.tituloValor.innerHTML = "Valor";
 
         }
 
@@ -203,9 +213,10 @@
             var frm = pegarFormulario();
             limparEdicao();
             frm.nome.innerHTML = 'Editando - ' + Conceito.nome;
-            if (Conceito.tipo != "Não Definido") {
+            if (Conceito.tipo != "Nao Definido") {
                 frm.tipo.value = Conceito.tipo;
                 frm.subTipo.value = Conceito.subTipo;
+                trocarTipo();
             }
             frm.salvar.setAttribute("onClick", "salvarEdicao(" + index + ");");
 
@@ -236,9 +247,8 @@
             var frm = pegarFormulario();
             var lstSubTipo;
 
-            frm.linhaSubTipo.style.visibility = "hidden";
-            frm.linhaValor.style.visibility = "hidden";
-            frm.linhaDias.style.visibility = "hidden";
+            limparEdicao2(false);
+
 
             if (frm.tipo.value == "Ambiente") {
                 lstSubTipo = "<option value='OP1'></option>";
@@ -249,10 +259,13 @@
                 frm.linhaSubTipo.style.visibility = "visible";
                 frm.linhaValor.style.visibility = "visible";
                 frm.linhaDias.style.visibility = "visible";
+                frm.dias.value = 0;
+                frm.tituloSubTipo.innerHTML = "Ambiente";
+                frm.tituloValor.innerHTML = "Ativo";
             }
             if (frm.tipo.value == "Constante") {
                 lstSubTipo = "<option value='Texto'></option>";
-                lstSubTipo += "<option value='Numérico'></option>";
+                lstSubTipo += "<option value='Numerico'></option>";
                 lstSubTipo += "<option value='Data'></option>";
                 frm.linhaSubTipo.style.visibility = "visible";
                 frm.linhaValor.style.visibility = "visible";
@@ -270,10 +283,11 @@
         cmbExpressao.onchange = trocaExpressao;
 
 
-        txthelp.value = subTipoConceito.innerHTML;
+        txthelp.value = document.getElementById("frmEdicao.Titulo.SubTipo").innerHTML;
         //frmEdicao.style = "visibility: hidden;"
         frmEdicao.style.visibility = "hidden"
         txthelp.style.visibility = "hidden"
+        //txthelp.style.visibility = "visible"
 
     </script>
 
