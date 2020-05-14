@@ -1,0 +1,283 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+    <meta charset="UTF-8">
+
+    <style>
+        body {
+            background-color: orange;
+        }
+
+        h1 {
+            color: blue;
+        }
+
+        p {
+            color: red;
+        }
+
+        td {
+            margin: 10px;
+            padding: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td>Expressão</td>
+            <td><input type="search" list="expressao" id="cmbExpressao"></td>
+            <td><button id="btLimpa">limpar</button></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <br>
+    <br>
+    <table id="tbConceito">
+        <tr>
+            <td>Conceito</td>
+            <td>Tipo</td>
+            <td>SubTipo</td>
+            <td>Valor</td>
+            <td>D+N</td>
+        </tr>
+        <!--         <tr>
+            <td>Conceito A</td>
+            <td><input list="tipoConceito" id=""></td>
+            <td><input list="subTipoConceito"></td>
+            <td><input type="text"></td>
+            <td><input type="number" value=0></td>
+            <td><button>Edit</button></td>
+        </tr> -->
+    </table>
+    <br>
+    <br>
+    <br>
+    <div id="frmEdicao" style="visibility: visible;">
+        <h1 id="frmEdicao.Conceito">form edicao</h1>
+        <table>
+            <tr>
+                <td>Tipo Conceito</td>
+                <td><input type="search" list="tipoConceito" id="frmEdicao.Tipo" onchange="trocarTipo()"></td>
+            </tr>
+            <tr id="frmEdicao.Linha.SubTipo">
+                <td>Sub Tipo Conceito</td>
+                <td><input type="search" list="subTipoConceito" id="frmEdicao.SubTipo"></td>
+            </tr>
+            <tr id="frmEdicao.Linha.Valor">
+                <td>Valor</td>
+                <td><input type="text" id="frmEdicao.Valor"></td>
+            </tr>
+            <tr id="frmEdicao.Linha.Dias">
+                <td>DN</td>
+                <td><input type="number" id="frmEdicao.Dias"></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><button onclick="cancelarEdicao()">Cancelar</button></td>
+                <td><button onclick="limparEdicao()">Limpar</button></td>
+                <td><button id="frmEdicao.Salvar">Salvar</button></td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <textarea id="txthelp" style="width: 70%;height: 200px;"></textarea>
+
+
+    <datalist id="tipoConceito">
+        <option value="Ambiente">
+        <option value="Constante">
+        <option value="Retorno">
+    </datalist>
+    <datalist id="subTipoConceito">
+        <option value="Ambiente">
+        <option value="Constante">
+        <option value="Retorno">
+    </datalist>
+    <datalist id="expressao">
+        <option value="Expressão A">
+        <option value="Expressão B">
+        <option value="Expressão C">
+        <option value="Expressão D">
+        <option value="Expressão E">
+        <option value="Expressão F">
+    </datalist>
+
+
+    <script>
+
+        var cmbExpressao = document.getElementById("cmbExpressao");
+        var btLimpa = document.getElementById("btLimpa");
+        var txthelp = document.getElementById("txthelp");
+        var frmEdicao = document.getElementById("frmEdicao");
+        var subTipoConceito = document.getElementById("subTipoConceito");
+        var lstConceitos = new Array();
+
+
+
+        function limparTbConceito() {
+            var tbConceito = document.getElementById("tbConceito");
+
+            tbConceito.innerHTML = '<tbody><tr><td>Conceito</td><td>Tipo</td><td>SubTipo</td><td>Valor</td><td>D+N</td><td></td></tr></tbody>';
+            lstConceitos = new Array();
+        }
+
+        function trocaExpressao() {
+            limparTbConceito();
+            cancelarEdicao();
+
+            var qtd = 0
+            do {
+                qtd = Math.round(Math.random() * 10)
+            } while (qtd == 0);
+
+
+            for (let index = 0; index < qtd; index++) {
+
+                lstConceitos.push({ nome: 'Conceito - ' + index, tipo: 'Não Definido', subTipo: '-', valor: '-', dias: '-' })
+            }
+
+            atualizarConceito();
+
+        }
+
+        function atualizarConceito() {
+
+            frmEdicao.style.visibility = "hidden"
+
+            var tabela = '<tbody><tr><td>Conceito</td><td>Tipo</td><td>SubTipo</td><td>Valor</td><td>D+N</td><td></td></tr>'
+
+            for (let index = 0; index < lstConceitos.length; index++) {
+                const Conceito = lstConceitos[index];
+
+                tabela += '<tr><td>' + Conceito.nome + '</td><td>' + Conceito.tipo + '</td><td>' + Conceito.subTipo + '</td><td>' + Conceito.valor + '</td><td>' + Conceito.dias + '</td><td><button onClick="editarConceito(' + index + ')">Edit</button></td></tr>'
+            }
+            tabela += '</tbody>'
+            tbConceito.innerHTML = tabela
+            txthelp.value = tbConceito.innerHTML;
+        }
+
+        function pegarFormulario() {
+            var formulario = {
+                nome: document.getElementById("frmEdicao.Conceito")
+                , tipo: document.getElementById("frmEdicao.Tipo")
+                , subTipo: document.getElementById("frmEdicao.SubTipo")
+                , valor: document.getElementById("frmEdicao.Valor")
+                , dias: document.getElementById("frmEdicao.Dias")
+                , linhaSubTipo: document.getElementById("frmEdicao.Linha.SubTipo")
+                , linhaValor: document.getElementById("frmEdicao.Linha.Valor")
+                , linhaDias: document.getElementById("frmEdicao.Linha.Dias")
+                , salvar: document.getElementById("frmEdicao.Salvar")
+            }
+            return formulario;
+        }
+
+        function limparEdicao() {
+            var frm = pegarFormulario();
+            frm.tipo.value = '';
+            frm.subTipo.value = '';
+            frm.valor.value = '';
+            frm.dias.value = 0;
+
+            frm.linhaSubTipo.style.visibility = "hidden";
+            frm.linhaValor.style.visibility = "hidden";
+            frm.linhaDias.style.visibility = "hidden";
+
+        }
+
+        function editarConceito(index) {
+            const Conceito = lstConceitos[index];
+            frmEdicao.style.visibility = "visible"
+            var frm = pegarFormulario();
+            limparEdicao();
+            frm.nome.innerHTML = 'Editando - ' + Conceito.nome;
+            if (Conceito.tipo != "Não Definido") {
+                frm.tipo.value = Conceito.tipo;
+                frm.subTipo.value = Conceito.subTipo;
+            }
+            frm.salvar.setAttribute("onClick", "salvarEdicao(" + index + ");");
+
+        }
+
+        function cancelarEdicao() {
+            frmEdicao.style = "visibility:visible;"
+        }
+
+        function salvarEdicao(index) {
+            var frm = pegarFormulario();
+            var Conceito = lstConceitos[index];
+            Conceito.tipo = frm.tipo.value;
+            Conceito.subTipo = frm.subTipo.value;
+            Conceito.valor = frm.valor.value;
+            Conceito.dias = frm.dias.value;
+
+            limparEdicao();
+            atualizarConceito();
+        }
+
+        function limparCmbExpressao() {
+            cmbExpressao.value = '';
+            limparTbConceito();
+        }
+
+        function trocarTipo() {
+            var frm = pegarFormulario();
+            var lstSubTipo;
+
+            frm.linhaSubTipo.style.visibility = "hidden";
+            frm.linhaValor.style.visibility = "hidden";
+            frm.linhaDias.style.visibility = "hidden";
+
+            if (frm.tipo.value == "Ambiente") {
+                lstSubTipo = "<option value='OP1'></option>";
+                lstSubTipo += "<option value='LS'></option>";
+                lstSubTipo += "<option value='LX'></option>";
+                lstSubTipo += "<option value='BBG'></option>";
+                lstSubTipo += "<option value='INDIC'></option>";
+                frm.linhaSubTipo.style.visibility = "visible";
+                frm.linhaValor.style.visibility = "visible";
+                frm.linhaDias.style.visibility = "visible";
+            }
+            if (frm.tipo.value == "Constante") {
+                lstSubTipo = "<option value='Texto'></option>";
+                lstSubTipo += "<option value='Numérico'></option>";
+                lstSubTipo += "<option value='Data'></option>";
+                frm.linhaSubTipo.style.visibility = "visible";
+                frm.linhaValor.style.visibility = "visible";
+            }
+            if (frm.tipo.value == "Retorno") {
+                frm.linhaSubTipo.style.visibility = "hidden";
+                frm.linhaValor.style.visibility = "hidden";
+                frm.linhaDias.style.visibility = "hidden";
+            }
+            subTipoConceito.innerHTML = lstSubTipo;
+            txthelp.value = frm.tipo.value + subTipoConceito.innerHTML;
+        }
+
+        btLimpa.onclick = limparCmbExpressao;
+        cmbExpressao.onchange = trocaExpressao;
+
+
+        txthelp.value = subTipoConceito.innerHTML;
+        //frmEdicao.style = "visibility: hidden;"
+        frmEdicao.style.visibility = "hidden"
+        txthelp.style.visibility = "hidden"
+
+    </script>
+
+
+</body>
+
+</html>
